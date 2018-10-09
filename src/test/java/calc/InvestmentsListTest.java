@@ -22,9 +22,9 @@ public class InvestmentsListTest {
         int foreignQuantity = InvestmentFundsTestData.FIRST_INVESTMENTS.countFundQuantityForType(FundType.FOREIGN);
         int moneyQuantity = InvestmentFundsTestData.FIRST_INVESTMENTS.countFundQuantityForType(FundType.MONEY);
 
-        assertEquals(polishQuantity, 2);
-        assertEquals(foreignQuantity, 3);
-        assertEquals(moneyQuantity, 1);
+        assertEquals(2, polishQuantity);
+        assertEquals(3, foreignQuantity);
+        assertEquals(1, moneyQuantity);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class InvestmentsListTest {
         List<InvestmentFund> polishInvestments
                 = InvestmentFundsTestData.FIRST_INVESTMENTS.getInvestmentFundsByFundType(FundType.POLISH);
 
-        assertEquals(polishInvestments.size(), 2);
+        assertEquals(2, polishInvestments.size());
         assertEquals(InvestmentFundsTestData.FIRST_SET_POLISH1, polishInvestments.get(0));
         assertEquals(InvestmentFundsTestData.FIRST_SET_POLISH2, polishInvestments.get(1));
     }

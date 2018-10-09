@@ -18,7 +18,7 @@ public class InvestmentsResultDivision {
         this.amountsAssignedToFunds = amountsAssignedToFunds;
         this.percantageOfAmountsAssignedToFunds = amountsAssignedToFunds.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> ((entry.getValue() * 100) / (double)divisibleAmount) ));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> ((entry.getValue() * 100) / (double)divisibleAmount) ));
     }
 
     public int getNotDividedAmount() {

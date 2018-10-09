@@ -1,8 +1,6 @@
 package calc;
 
 import data.InvestmentFundsTestData;
-import fund.FundType;
-import fund.InvestmentFund;
 import org.junit.Test;
 import style.BalancedInvestmentStyle;
 import style.RiskyInvestmentStyle;
