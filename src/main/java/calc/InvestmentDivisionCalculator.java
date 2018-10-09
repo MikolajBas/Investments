@@ -8,47 +8,83 @@ import java.util.*;
 
 public class InvestmentDivisionCalculator {
 
+    public static final int MODULO_HUNDRED_LIMIT = 100;
+
     private InvestmentStyle investmentStyle;
 
-    public InvestmentDivisionCalculator(InvestmentStyle investmentStyle) {
+    private InvestmentsList investmentsList;
+
+    private int amount;
+
+    public InvestmentDivisionCalculator(InvestmentStyle investmentStyle, InvestmentsList investmentsList, int amount) {
         this.investmentStyle = investmentStyle;
+        this.investmentsList = investmentsList;
+        this.amount = amount;
     }
 
-    public Map calculateMoneyAllocation(InvestmentsList investmentsList, int amount) {
-        Map<FundType, Double> divisionRatios = investmentStyle.getDivisionRatios();
-        Collection<Double> divisionRatiosValues = divisionRatios.values();
+    public InvestmentsResultDivision calculateMoneyAllocation() {
+        Map<FundType, Double> divisionRatiosForFundTypes = investmentStyle.getDivisionRatios();
+
+        Collection<Double> divisionRatiosValues = divisionRatiosForFundTypes.values();
+        int divisibleAmount = getDivisibleAmount(divisionRatiosValues);
+
+        Map<InvestmentFund, Integer> results = new HashMap<>();
+        for(Map.Entry<FundType, Double> divisionRatiosForFundType : divisionRatiosForFundTypes.entrySet()) {
+            results.putAll(
+                    calculateAllocationForFundType(divisibleAmount, divisionRatiosForFundType.getKey(), divisionRatiosForFundType.getValue())
+            );
+        }
+
+        int remainingValue = amount - divisibleAmount;
+        return new InvestmentsResultDivision(results, amount, remainingValue);
+    }
+
+    private Map<InvestmentFund, Integer> calculateAllocationForFundType(int divisibleAmount, FundType fundType, double divisionRatioForFundType) {
+        Map<InvestmentFund, Integer> results = new HashMap<>();
+
+        Integer quantityByFundType = investmentsList.countFundQuantityForType(fundType);
+        List<InvestmentFund> investmentFundsByFundType = investmentsList.getInvestmentFundsByFundType(fundType);
+
+        int amountForFundType = (int)(divisibleAmount * divisionRatioForFundType);
+        int amountForInvestmentsExceptFirst =
+                quantityByFundType != 0 ? amountForFundType / quantityByFundType : 0;
+        int remainingValue = amountForFundType - (amountForInvestmentsExceptFirst * quantityByFundType);
+        int amountForFirstInvestment = amountForInvestmentsExceptFirst + remainingValue;
+
+        Iterator<InvestmentFund> iterator = investmentFundsByFundType.iterator();
+        InvestmentFund first = iterator.next();
+        results.put(first, amountForFirstInvestment);
+        while (iterator.hasNext()) {
+            InvestmentFund next = iterator.next();
+            results.put(next, amountForInvestmentsExceptFirst);
+        }
+        return results;
+    }
+
+    private int getDivisibleAmount(Collection<Double> divisionRatiosValues) {
         int divisibleAmount = amount;
-        for(int i = 0; i < 100; i++) {
-            divisibleAmount = divisibleAmount - i;
-            boolean divisible = true;
-            for(Double drv : divisionRatiosValues) {
-                if(Math.floor((divisibleAmount * drv)) != (divisibleAmount * drv)) {
-                    divisible = false;
+        boolean divisible = false;
+        int substractVal = 0;
+
+        //simplest solution, the worst scenario is that we need to substract 99 from start amount to get divisible amount
+        //more efficient is to utilize GCD, but that requires much more code
+        while(!divisible || substractVal == MODULO_HUNDRED_LIMIT) {
+            divisibleAmount = divisibleAmount - substractVal;
+            divisible = true;
+
+            for(Double divisionRatioValue : divisionRatiosValues) {
+                divisible = isDivisible(divisibleAmount, divisionRatioValue);
+                if(!divisible) {
                     break;
                 }
             }
-            if(divisible) {
-                break;
-            }
+            substractVal++;
         }
-        int remainingValue = amount - divisibleAmount;
-        Map<InvestmentFund, Integer> results = new HashMap<>();
-//        Map<FundType, Integer> quantityByType = investmentsList.countQuantityByType();
-        for(Map.Entry<FundType, Double> divisionRatio : divisionRatios.entrySet()) {
-            Integer quantityByFundType = investmentsList.countQuantity(divisionRatio.getKey());
-            List<InvestmentFund> investmentFundsByFundType = investmentsList.getInvestmentFundsByFundType(divisionRatio.getKey());
-            int amountByFundType = (int)(divisibleAmount * divisionRatio.getValue());
-            int amountForType = amountByFundType / quantityByFundType;
-            int value = amountByFundType - (amountForType * quantityByFundType);
-            Iterator<InvestmentFund> iterator = investmentFundsByFundType.iterator();
-            InvestmentFund first = iterator.next();
-            int last = amountForType + value;
-            results.put(first, last);
-            while (iterator.hasNext()) {
-                InvestmentFund next = iterator.next();
-                results.put(next, amountForType);
-            }
-        }
-        return results;
+
+        return divisibleAmount;
+    }
+
+    private boolean isDivisible(int divisibleAmount, Double divisionRatioValue) {
+        return Math.floor((divisibleAmount * divisionRatioValue)) == (divisibleAmount * divisionRatioValue);
     }
 }
