@@ -36,17 +36,17 @@ public class InvestmentFundsTestData {
     /**
      * second data set
      */
-    public static final InvestmentFund SECOND_SET_POLISH1 = InvestmentFund.createFund(1l, "Fundusz Polski 1", FundType.POLISH);
+    public static final InvestmentFund SECOND_SET_POLISH1 = InvestmentFund.createFund(11l, "Fundusz Polski 1", FundType.POLISH);
 
-    public static final InvestmentFund SECOND_SET_POLISH2 = InvestmentFund.createFund(2l, "Fundusz Polski 2", FundType.POLISH);
+    public static final InvestmentFund SECOND_SET_POLISH2 = InvestmentFund.createFund(12l, "Fundusz Polski 2", FundType.POLISH);
 
-    public static final InvestmentFund SECOND_SET_POLISH3 = InvestmentFund.createFund(3l, "Fundusz Polski 3", FundType.POLISH);
+    public static final InvestmentFund SECOND_SET_POLISH3 = InvestmentFund.createFund(13l, "Fundusz Polski 3", FundType.POLISH);
 
-    public static final InvestmentFund SECOND_SET_FOREIGN1 = InvestmentFund.createFund(4l, "Fundusz Zagraniczny 1", FundType.FOREIGN);
+    public static final InvestmentFund SECOND_SET_FOREIGN1 = InvestmentFund.createFund(14l, "Fundusz Zagraniczny 1", FundType.FOREIGN);
 
-    public static final InvestmentFund SECOND_SET_FOREIGN2 = InvestmentFund.createFund(5l, "Fundusz Zagraniczny 2", FundType.FOREIGN);
+    public static final InvestmentFund SECOND_SET_FOREIGN2 = InvestmentFund.createFund(15l, "Fundusz Zagraniczny 2", FundType.FOREIGN);
 
-    public static final InvestmentFund SECOND_SET_MONEY1 = InvestmentFund.createFund(6l, "Fundusz Pieniężny 1", FundType.MONEY);
+    public static final InvestmentFund SECOND_SET_MONEY1 = InvestmentFund.createFund(16l, "Fundusz Pieniężny 1", FundType.MONEY);
 
     public static final InvestmentsList SECOND_INVESTMENTS = new InvestmentsList(
             Arrays.asList(
@@ -56,6 +56,16 @@ public class InvestmentFundsTestData {
                     SECOND_SET_FOREIGN1,
                     SECOND_SET_FOREIGN2,
                     SECOND_SET_MONEY1
+            ));
+
+    /**
+     * third data set
+     */
+    public static final InvestmentFund THIRD_SET_POLISH1 = InvestmentFund.createFund(111l, "Fundusz Polski 1", FundType.POLISH);
+
+    public static final InvestmentsList THIRD_INVESTMENTS = new InvestmentsList(
+            Arrays.asList(
+                    THIRD_SET_POLISH1
             ));
 
     private InvestmentFundsTestData() {}

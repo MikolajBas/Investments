@@ -11,6 +11,11 @@ import static org.junit.Assert.assertEquals;
 
 public class InvestmentsListTest {
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfProvidedListIsEmpty() {
+        InvestmentsList investmentsList = new InvestmentsList(null);
+    }
+
     @Test
     public void checkQuantityCalculation() {
         int polishQuantity = InvestmentFundsTestData.FIRST_INVESTMENTS.countFundQuantityForType(FundType.POLISH);

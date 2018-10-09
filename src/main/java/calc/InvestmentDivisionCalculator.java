@@ -8,8 +8,6 @@ import java.util.*;
 
 public class InvestmentDivisionCalculator {
 
-    public static final int MODULO_HUNDRED_LIMIT = 100;
-
     private InvestmentStyle investmentStyle;
 
     private InvestmentsList investmentsList;
@@ -17,6 +15,9 @@ public class InvestmentDivisionCalculator {
     private int amount;
 
     public InvestmentDivisionCalculator(InvestmentStyle investmentStyle, InvestmentsList investmentsList, int amount) {
+        if(amount < 0) {
+            throw new IllegalArgumentException("Amount must be positive number");
+        }
         this.investmentStyle = investmentStyle;
         this.investmentsList = investmentsList;
         this.amount = amount;
@@ -43,11 +44,13 @@ public class InvestmentDivisionCalculator {
         Map<InvestmentFund, Integer> results = new HashMap<>();
 
         Integer quantityByFundType = investmentsList.countFundQuantityForType(fundType);
+        if(quantityByFundType == 0) {
+            throw new IllegalArgumentException("Investments list must contain all investment types required for investment style");
+        }
         List<InvestmentFund> investmentFundsByFundType = investmentsList.getInvestmentFundsByFundType(fundType);
 
         int amountForFundType = (int)(divisibleAmount * divisionRatioForFundType);
-        int amountForInvestmentsExceptFirst =
-                quantityByFundType != 0 ? amountForFundType / quantityByFundType : 0;
+        int amountForInvestmentsExceptFirst = amountForFundType / quantityByFundType;
         int remainingValue = amountForFundType - (amountForInvestmentsExceptFirst * quantityByFundType);
         int amountForFirstInvestment = amountForInvestmentsExceptFirst + remainingValue;
 

@@ -11,6 +11,9 @@ public class InvestmentsList {
     public List<InvestmentFund> investmentFunds;
 
     public InvestmentsList(List<InvestmentFund> investmentFunds) {
+        if(investmentFunds == null || investmentFunds.size() == 0) {
+            throw new IllegalArgumentException("Investments list cannot be empty");
+        }
         this.investmentFunds = investmentFunds;
     }
 

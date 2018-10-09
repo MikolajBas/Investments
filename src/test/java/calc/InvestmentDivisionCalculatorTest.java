@@ -15,6 +15,26 @@ import static org.junit.Assert.assertEquals;
 
 public class InvestmentDivisionCalculatorTest {
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfProvidedAmountIsNegative() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new SafeInvestmentStyle(),
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                -2
+        );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfProvidedInvestmentListDoesNotContainAllRequiredData() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new SafeInvestmentStyle(),
+                InvestmentFundsTestData.THIRD_INVESTMENTS,
+                3
+        );
+
+        InvestmentsResultDivision result = calculator.calculateMoneyAllocation();
+    }
+
     @Test
     public void testSafeStyle() {
         InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
