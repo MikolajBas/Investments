@@ -36,7 +36,7 @@ public class InvestmentDivisionCalculator {
         }
 
         int remainingValue = amount - divisibleAmount;
-        return new InvestmentsResultDivision(results, amount, remainingValue);
+        return new InvestmentsResultDivision(results, divisibleAmount, remainingValue);
     }
 
     private Map<InvestmentFund, Integer> calculateAllocationForFundType(int divisibleAmount, FundType fundType, double divisionRatioForFundType) {
@@ -68,8 +68,8 @@ public class InvestmentDivisionCalculator {
 
         //simplest solution, the worst scenario is that we need to substract 99 from start amount to get divisible amount
         //more efficient is to utilize GCD, but that requires much more code
-        while(!divisible || substractVal == MODULO_HUNDRED_LIMIT) {
-            divisibleAmount = divisibleAmount - substractVal;
+        while(!divisible) {
+            divisibleAmount = amount - substractVal;
             divisible = true;
 
             for(Double divisionRatioValue : divisionRatiosValues) {

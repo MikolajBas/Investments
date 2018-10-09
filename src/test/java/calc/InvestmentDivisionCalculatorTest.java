@@ -1,76 +1,110 @@
 package calc;
 
+import data.InvestmentFundsTestData;
 import fund.FundType;
 import fund.InvestmentFund;
 import org.junit.Test;
+import style.BalancedInvestmentStyle;
+import style.RiskyInvestmentStyle;
 import style.SafeInvestmentStyle;
 
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class InvestmentDivisionCalculatorTest {
 
     @Test
-    public void firstTest() {
-        InvestmentFund first = InvestmentFund.createFund(1l, "Fundusz Polski 1", FundType.POLISH);
-        InvestmentFund second = InvestmentFund.createFund(2l, "Fundusz Polski 2", FundType.POLISH);
-        InvestmentFund third = InvestmentFund.createFund(3l, "Fundusz Zagraniczny 1", FundType.FOREIGN);
-        InvestmentFund fourth = InvestmentFund.createFund(4l, "Fundusz Zagraniczny 2", FundType.FOREIGN);
-        InvestmentFund fifth = InvestmentFund.createFund(5l, "Fundusz Zagraniczny 3", FundType.FOREIGN);
-        InvestmentFund sixth = InvestmentFund.createFund(6l, "Fundusz Pieniężny 1", FundType.MONEY);
-        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(new SafeInvestmentStyle(),
-                new InvestmentsList(
-                        Arrays.asList(
-                                first,
-                                second,
-                                third,
-                                fourth,
-                                fifth,
-                                sixth
-                        )),
+    public void testSafeStyle() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new SafeInvestmentStyle(),
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
                 10001
         );
 
         InvestmentsResultDivision result = calculator.calculateMoneyAllocation();
-        assertEquals(1000, (int)result.getAmountsAssignedToFunds().get(first));
-        assertEquals(1000, (int)result.getAmountsAssignedToFunds().get(second));
-        assertEquals(2500, (int)result.getAmountsAssignedToFunds().get(third));
-        assertEquals(2500, (int)result.getAmountsAssignedToFunds().get(fourth));
-        assertEquals(2500, (int)result.getAmountsAssignedToFunds().get(fifth));
-        assertEquals(500, (int)result.getAmountsAssignedToFunds().get(sixth));
+
+        assertResults(
+                Arrays.asList(1000, 1000, 2500, 2500, 2500, 500),
+                Arrays.asList(10.0, 10.0, 25.0, 25.0, 25.0, 5.0),
+                1,
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                result
+        );
     }
 
     @Test
-    public void secondTest() {
-        InvestmentFund first = InvestmentFund.createFund(1l, "Fundusz Polski 1", FundType.POLISH);
-        InvestmentFund second = InvestmentFund.createFund(2l, "Fundusz Polski 2", FundType.POLISH);
-        InvestmentFund third = InvestmentFund.createFund(3l, "Fundusz Polski 3", FundType.POLISH);
-        InvestmentFund fourth = InvestmentFund.createFund(4l, "Fundusz Zagraniczny 1", FundType.FOREIGN);
-        InvestmentFund fifth = InvestmentFund.createFund(5l, "Fundusz Zagraniczny 2", FundType.FOREIGN);
-        InvestmentFund sixth = InvestmentFund.createFund(6l, "Fundusz Pieniężny 1", FundType.MONEY);
-
-        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(new SafeInvestmentStyle(),
-                new InvestmentsList(
-                    Arrays.asList(
-                            first,
-                            second,
-                            third,
-                            fourth,
-                            fifth,
-                            sixth
-                    )),
-                10001
+    public void testRiskyStyle() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new RiskyInvestmentStyle(),
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                10004
         );
 
         InvestmentsResultDivision result = calculator.calculateMoneyAllocation();
-        assertEquals(668, (int)result.getAmountsAssignedToFunds().get(first));
-        assertEquals(666, (int)result.getAmountsAssignedToFunds().get(second));
-        assertEquals(666, (int)result.getAmountsAssignedToFunds().get(third));
-        assertEquals(3750, (int)result.getAmountsAssignedToFunds().get(fourth));
-        assertEquals(3750, (int)result.getAmountsAssignedToFunds().get(fifth));
-        assertEquals(500, (int)result.getAmountsAssignedToFunds().get(sixth));
+
+        assertResults(
+                Arrays.asList(2000, 2000, 668, 666, 666, 4000),
+                Arrays.asList(20.0, 20.0, 6.68, 6.66, 6.66, 40.0),
+                4,
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                result
+        );
     }
 
+    @Test
+    public void testBalancedStyle() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new BalancedInvestmentStyle(),
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                10099
+        );
+
+        InvestmentsResultDivision result = calculator.calculateMoneyAllocation();
+
+        assertResults(
+                Arrays.asList(1514, 1513, 2018, 2018, 2018, 1009),
+                Arrays.asList(15.0, 15.0, 20.0, 20.0, 20.0, 10.0),
+                9,
+                InvestmentFundsTestData.FIRST_INVESTMENTS,
+                result
+        );
+    }
+
+    @Test
+    public void testSafeStyleWithNotDivisibleAmountForFundType() {
+        InvestmentDivisionCalculator calculator = new InvestmentDivisionCalculator(
+                new SafeInvestmentStyle(),
+                InvestmentFundsTestData.SECOND_INVESTMENTS,
+                10000
+        );
+
+        InvestmentsResultDivision result = calculator.calculateMoneyAllocation();
+
+        assertResults(
+                Arrays.asList(668, 666, 666, 3750, 3750, 500),
+                Arrays.asList(6.68, 6.66, 6.66, 37.5, 37.5, 5.0),
+                0,
+                InvestmentFundsTestData.SECOND_INVESTMENTS,
+                result
+        );
+    }
+
+    private void assertResults(List<Integer> expectedAmounts, List<Double> expectedPercanteges, int expectedRemaining,
+                               InvestmentsList investmentsList, InvestmentsResultDivision result) {
+        int i = 0;
+        for(Integer expectedResult : expectedAmounts) {
+            assertEquals(expectedResult, result.getAmountsAssignedToFunds().get(investmentsList.investmentFunds.get(i)));
+            i++;
+        }
+
+        i = 0;
+        for(Double expectedPercantage : expectedPercanteges) {
+            assertEquals(expectedPercantage, result.getPercantageOfAmountsAssignedToFunds().get(investmentsList.investmentFunds.get(i)), 0.009);
+            i++;
+        }
+
+        assertEquals(expectedRemaining, result.getNotDividedAmount());
+    }
 }

@@ -11,14 +11,14 @@ public class InvestmentsResultDivision {
 
     private Map<InvestmentFund, Integer> amountsAssignedToFunds;
 
-    private Map<InvestmentFund, Integer> percantageOfAmountsAssignedToFunds;
+    private Map<InvestmentFund, Double> percantageOfAmountsAssignedToFunds;
 
-    public InvestmentsResultDivision(Map<InvestmentFund, Integer> amountsAssignedToFunds, int amount, int notDividedAmount) {
+    public InvestmentsResultDivision(Map<InvestmentFund, Integer> amountsAssignedToFunds, int divisibleAmount, int notDividedAmount) {
         this.notDividedAmount = notDividedAmount;
         this.amountsAssignedToFunds = amountsAssignedToFunds;
         this.percantageOfAmountsAssignedToFunds = amountsAssignedToFunds.entrySet()
                 .stream()
-                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> (entry.getValue() / amount) * 100));
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> ((entry.getValue() * 100) / (double)divisibleAmount) ));
     }
 
     public int getNotDividedAmount() {
@@ -29,7 +29,7 @@ public class InvestmentsResultDivision {
         return amountsAssignedToFunds;
     }
 
-    public Map<InvestmentFund, Integer> getPercantageOfAmountsAssignedToFunds() {
+    public Map<InvestmentFund, Double> getPercantageOfAmountsAssignedToFunds() {
         return percantageOfAmountsAssignedToFunds;
     }
 }
